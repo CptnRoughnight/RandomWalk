@@ -1,0 +1,17 @@
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/bin/Debug/MonoTest.deps.json
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/bin/Debug/MonoTest.runtimeconfig.json
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/bin/Debug/MonoTest.dll
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/bin/Debug/MonoTest.pdb
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/bin/Debug/GodotSharp.dll
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/bin/Debug/GodotSharpEditor.dll
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/MonoTest.csproj.AssemblyReference.cache
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/MonoTest.GeneratedMSBuildEditorConfig.editorconfig
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/MonoTest.AssemblyInfoInputs.cache
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/MonoTest.AssemblyInfo.cs
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/MonoTest.csproj.CoreCompileInputs.cache
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/MonoTest.csproj.CopyComplete
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/MonoTest.dll
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/refint/MonoTest.dll
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/MonoTest.pdb
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/MonoTest.genruntimeconfig.cache
+/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/Debug/ref/MonoTest.dll

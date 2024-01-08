@@ -1,0 +1,208 @@
+[gd_scene load_steps=14 format=3 uid="uid://t1vvqyeg45tm"]
+
+[ext_resource type="Script" path="res://node_3d.cs" id="1_qol80"]
+[ext_resource type="Script" path="res://free_look_camera.gd" id="2_4qsqh"]
+[ext_resource type="Shader" path="res://checker.gdshader" id="3_a0rot"]
+[ext_resource type="PackedScene" uid="uid://2bvquti5bhlx" path="res://box.tscn" id="3_b8ycs"]
+[ext_resource type="MeshLibrary" uid="uid://cfay1rhf1n6y" path="res://tiles.tres" id="5_b3avp"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_kwl8i"]
+dof_blur_far_distance = 100.0
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_w3xcn"]
+
+[sub_resource type="Sky" id="Sky_whp8m"]
+sky_material = SubResource("PhysicalSkyMaterial_w3xcn")
+process_mode = 3
+
+[sub_resource type="Environment" id="Environment_17ay5"]
+background_mode = 2
+sky = SubResource("Sky_whp8m")
+tonemap_mode = 2
+tonemap_white = 4.0
+ssao_enabled = true
+ssil_enabled = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vst3b"]
+render_priority = 0
+shader = ExtResource("3_a0rot")
+shader_parameter/subdivisions = 256.0
+shader_parameter/grid_width = 0.0
+shader_parameter/background_color = Color(0, 0, 0, 1)
+shader_parameter/background_color_two = Color(0, 0, 0, 1)
+shader_parameter/grid_color = Color(0, 0, 0, 1)
+shader_parameter/dashed_scale_x = 0.0
+shader_parameter/dashed_scale_y = 0.0
+shader_parameter/dashed_count_x = 0.0
+shader_parameter/dashed_count_y = 0.0
+shader_parameter/point_width = 0.021
+shader_parameter/point_color = Color(0, 0, 0, 1)
+shader_parameter/point_scale_x = 0.05
+shader_parameter/point_scale_y = 0.05
+shader_parameter/inside_width = 0.01
+shader_parameter/inside_subdivisions = 6.0
+shader_parameter/inside_color = Color(0.4, 0.4, 0.4, 1)
+shader_parameter/in_dashed_scale_x = 0.3
+shader_parameter/in_dashed_scale_y = 0.3
+shader_parameter/in_dashed_count_x = 6.0
+shader_parameter/in_dashed_count_y = 6.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_cqfnw"]
+material = SubResource("ShaderMaterial_vst3b")
+size = Vector2(1000, 1000)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1lcl3"]
+albedo_color = Color(0, 0, 0, 0)
+metallic = 0.09
+metallic_specular = 0.08
+roughness = 0.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f2xiy"]
+bg_color = Color(0.223529, 0.223529, 0.223529, 0.509804)
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_qol80")
+floorColor = Color(0.533333, 0.501961, 0.654902, 1)
+wallColor = Color(0.262745, 0.439216, 0.686275, 1)
+useDelay = false
+waitTime = 0.01
+MAXTILES = 2000
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.95473, 0.297475, 0, -0.297475, 0.95473, 0, 10, 0)
+attributes = SubResource("CameraAttributesPractical_kwl8i")
+fov = 37.8493
+script = ExtResource("2_4qsqh")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.799465, 0.600713, 0, -0.600713, 0.799465, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_17ay5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_cqfnw")
+
+[node name="Box" parent="." instance=ExtResource("3_b8ycs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.565889, 0)
+visible = false
+material_override = SubResource("StandardMaterial3D_1lcl3")
+
+[node name="Level" type="Node3D" parent="."]
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.4
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="Panel" parent="CanvasLayer"]
+offset_left = 34.0
+offset_top = 32.0
+offset_right = 497.0
+offset_bottom = 441.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_f2xiy")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Placed" type="Label" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+focus_mode = 2
+
+[node name="visualize" type="CheckBox" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Visualize generation"
+
+[node name="RandSeed" type="CheckBox" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Random Seed"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+text = "Seed :"
+
+[node name="Seed" type="LineEdit" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../../Placed")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Steps :"
+
+[node name="SpinBox" type="SpinBox" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../../Placed")
+focus_mode = 2
+min_value = 100.0
+max_value = 10000.0
+step = 100.0
+value = 100.0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Thickness :"
+
+[node name="thick" type="SpinBox" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../../Placed")
+focus_mode = 2
+max_value = 10.0
+value = 1.0
+
+[node name="RandThick" type="CheckBox" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Random Thickness"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Wall Height :"
+
+[node name="wallHeight" type="SpinBox" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../../Placed")
+focus_mode = 2
+max_value = 10.0
+value = 1.0
+
+[node name="Generate" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+focus_mode = 1
+text = "Generate"
+
+[node name="MakeWalls" type="Button" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+focus_mode = 1
+text = "Make Walls"
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("5_b3avp")
+cell_size = Vector3(1.9, 1.9, 1.9)
+data = {
+"cells": PackedInt32Array(3, 0, 0, 3, 1, 0, 3, 2, 0, 3, 3, 0, 4, 3, 0, 4, 2, 0, 4, 1, 0, 4, 0, 0, 5, 0, 0, 5, 65535, 0, 5, 1, 0, 5, 2, 0, 5, 3, 0, 65539, 3, 196609, 65539, 2, 196609)
+}
+metadata/_editor_floor_ = Vector3(0, 1, 0)
+
+[connection signal="pressed" from="CanvasLayer/Panel/VBoxContainer/Generate" to="." method="_on_generate_pressed"]
+[connection signal="pressed" from="CanvasLayer/Panel/VBoxContainer/MakeWalls" to="." method="_on_make_walls_pressed"]

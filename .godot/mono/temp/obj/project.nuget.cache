@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "yZACyUaxU35kci/EVPhb1parmx1RXVGQbMjvotHsJjxTjCeCF6h8xWDSmeoRCZ+ZDTt7yYiPTamBRyQHWtMBXg==",
+  "success": true,
+  "projectFilePath": "/home/roughnight/Projekte/MonoTest/MonoTest.csproj",
+  "expectedPackageFiles": [
+    "/home/roughnight/.nuget/packages/godot.sourcegenerators/4.2.0/godot.sourcegenerators.4.2.0.nupkg.sha512",
+    "/home/roughnight/.nuget/packages/godotsharp/4.2.0/godotsharp.4.2.0.nupkg.sha512",
+    "/home/roughnight/.nuget/packages/godotsharpeditor/4.2.0/godotsharpeditor.4.2.0.nupkg.sha512",
+    "/home/roughnight/.nuget/packages/microsoft.netcore.app.ref/6.0.25/microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
+    "/home/roughnight/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.25/microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512"
+  ],
+  "logs": []
+}

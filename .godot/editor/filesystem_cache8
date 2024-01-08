@@ -1,0 +1,15 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1704549554
+box.cs::CSharpScript::-1::1704373402::0::1::::<>MeshInstance3D<>::
+box.tscn::PackedScene::1898467865753416273::1704465675::0::1::::<><>::res://box.cs
+checker.gdshader::Shader::-1::1704466924::0::1::::<><>::
+free_look_camera.gd::GDScript::-1::1704385810::0::1::::<>Camera3D<>::
+icon.svg::CompressedTexture2D::6405079302529172200::1704357926::1704357929::1::::<><>::
+Node2D.cs::CSharpScript::-1::1704360016::0::1::::<>Node2D<>::
+node_2d.tscn::PackedScene::8406849524779329577::1704358064::0::1::::<><>::res://Node2D.cs
+node_3d.cs::CSharpScript::-1::1704465673::0::1::::<>Node3D<>::
+node_3d.tscn::PackedScene::1388575286888111186::1704466923::0::1::::<><>::res://node_3d.cs<>res://free_look_camera.gd<>res://checker.gdshader<>uid://2bvquti5bhlx::::res://box.tscn
+README.md::TextFile::-1::1704373041::0::1::::<><>::
+::res://assets/::1704374070
+box.glb::PackedScene::9055506683920232121::1704373973::1704373976::1::::<><>::
+boxmat.tres::StandardMaterial3D::2916258965754480127::1704374070::0::1::::<><>::
