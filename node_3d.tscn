@@ -1,9 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://t1vvqyeg45tm"]
+[gd_scene load_steps=12 format=3 uid="uid://t1vvqyeg45tm"]
 
 [ext_resource type="Script" path="res://node_3d.cs" id="1_qol80"]
 [ext_resource type="Script" path="res://free_look_camera.gd" id="2_4qsqh"]
-[ext_resource type="Shader" path="res://checker.gdshader" id="3_a0rot"]
-[ext_resource type="PackedScene" uid="uid://2bvquti5bhlx" path="res://box.tscn" id="3_b8ycs"]
+[ext_resource type="Shader" path="res://checker.gdshader" id="4_53nk2"]
 [ext_resource type="MeshLibrary" uid="uid://cfay1rhf1n6y" path="res://tiles.tres" id="5_b3avp"]
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_kwl8i"]
@@ -23,14 +22,17 @@ tonemap_white = 4.0
 ssao_enabled = true
 ssil_enabled = true
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_vst3b"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f2xiy"]
+bg_color = Color(0.223529, 0.223529, 0.223529, 0.509804)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_p06as"]
 render_priority = 0
-shader = ExtResource("3_a0rot")
-shader_parameter/subdivisions = 256.0
-shader_parameter/grid_width = 0.0
+shader = ExtResource("4_53nk2")
+shader_parameter/subdivisions = 16.0
+shader_parameter/grid_width = 0.01
 shader_parameter/background_color = Color(0, 0, 0, 1)
 shader_parameter/background_color_two = Color(0, 0, 0, 1)
-shader_parameter/grid_color = Color(0, 0, 0, 1)
+shader_parameter/grid_color = Color(1, 1, 1, 1)
 shader_parameter/dashed_scale_x = 0.0
 shader_parameter/dashed_scale_y = 0.0
 shader_parameter/dashed_count_x = 0.0
@@ -47,18 +49,9 @@ shader_parameter/in_dashed_scale_y = 0.3
 shader_parameter/in_dashed_count_x = 6.0
 shader_parameter/in_dashed_count_y = 6.0
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_cqfnw"]
-material = SubResource("ShaderMaterial_vst3b")
+[sub_resource type="PlaneMesh" id="PlaneMesh_6uw6r"]
+material = SubResource("ShaderMaterial_p06as")
 size = Vector2(1000, 1000)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1lcl3"]
-albedo_color = Color(0, 0, 0, 0)
-metallic = 0.09
-metallic_specular = 0.08
-roughness = 0.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f2xiy"]
-bg_color = Color(0.223529, 0.223529, 0.223529, 0.509804)
 
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_qol80")
@@ -80,16 +73,6 @@ shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_17ay5")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("PlaneMesh_cqfnw")
-
-[node name="Box" parent="." instance=ExtResource("3_b8ycs")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.565889, 0)
-visible = false
-material_override = SubResource("StandardMaterial3D_1lcl3")
-
-[node name="Level" type="Node3D" parent="."]
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.4
@@ -152,6 +135,38 @@ max_value = 10000.0
 step = 100.0
 value = 100.0
 
+[node name="HBoxContainer7" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer7"]
+layout_mode = 2
+text = "Direction Change / Steps  :"
+
+[node name="SpinBox" type="SpinBox" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer7"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../../Placed")
+focus_mode = 2
+min_value = 10.0
+max_value = 1000.0
+step = 10.0
+value = 100.0
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer6"]
+layout_mode = 2
+text = "Min Thickness :"
+
+[node name="minThick" type="SpinBox" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer6"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../../Placed")
+focus_mode = 2
+max_value = 10.0
+value = 1.0
+
 [node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
 layout_mode = 2
 
@@ -164,12 +179,23 @@ layout_mode = 2
 size_flags_horizontal = 3
 focus_neighbor_left = NodePath("../../Placed")
 focus_mode = 2
-max_value = 10.0
+max_value = 50.0
 value = 1.0
 
 [node name="RandThick" type="CheckBox" parent="CanvasLayer/Panel/VBoxContainer"]
 layout_mode = 2
 text = "Random Thickness"
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer5"]
+layout_mode = 2
+text = "Probability :"
+
+[node name="thickProp" type="HSlider" parent="CanvasLayer/Panel/VBoxContainer/HBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer/Panel/VBoxContainer"]
 layout_mode = 2
@@ -199,10 +225,10 @@ text = "Make Walls"
 [node name="GridMap" type="GridMap" parent="."]
 mesh_library = ExtResource("5_b3avp")
 cell_size = Vector3(1.9, 1.9, 1.9)
-data = {
-"cells": PackedInt32Array(3, 0, 0, 3, 1, 0, 3, 2, 0, 3, 3, 0, 4, 3, 0, 4, 2, 0, 4, 1, 0, 4, 0, 0, 5, 0, 0, 5, 65535, 0, 5, 1, 0, 5, 2, 0, 5, 3, 0, 65539, 3, 196609, 65539, 2, 196609)
-}
-metadata/_editor_floor_ = Vector3(0, 1, 0)
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_6uw6r")
 
 [connection signal="pressed" from="CanvasLayer/Panel/VBoxContainer/Generate" to="." method="_on_generate_pressed"]
 [connection signal="pressed" from="CanvasLayer/Panel/VBoxContainer/MakeWalls" to="." method="_on_make_walls_pressed"]

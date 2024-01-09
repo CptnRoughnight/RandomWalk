@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "yZACyUaxU35kci/EVPhb1parmx1RXVGQbMjvotHsJjxTjCeCF6h8xWDSmeoRCZ+ZDTt7yYiPTamBRyQHWtMBXg==",
+  "dgSpecHash": "crkLO2COYuHaaDMIRzz4CQIxteX51F6EIlvv1TtMpjENWy8XmVPB/nOC4jUadVlNEkEULXO9atq7oAlGzMkDiQ==",
   "success": true,
-  "projectFilePath": "/home/roughnight/Projekte/MonoTest/MonoTest.csproj",
+  "projectFilePath": "/home/roughnight/Projekte/RandomWalk/MonoTest.csproj",
   "expectedPackageFiles": [
     "/home/roughnight/.nuget/packages/godot.sourcegenerators/4.2.0/godot.sourcegenerators.4.2.0.nupkg.sha512",
     "/home/roughnight/.nuget/packages/godotsharp/4.2.0/godotsharp.4.2.0.nupkg.sha512",

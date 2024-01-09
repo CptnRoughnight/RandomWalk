@@ -1,8 +1,6 @@
-res://checker.gdshader
-res://meshlib.tscn
 res://node_3d.tscn
 res://tiles.tres
-res://box.tscn
+res://checker.gdshader
 res://box.cs
 res://Node2D.cs
 res://node_3d.cs

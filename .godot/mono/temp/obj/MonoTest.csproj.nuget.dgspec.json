@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/roughnight/Projekte/MonoTest/MonoTest.csproj": {}
+    "/home/roughnight/Projekte/RandomWalk/MonoTest.csproj": {}
   },
   "projects": {
-    "/home/roughnight/Projekte/MonoTest/MonoTest.csproj": {
+    "/home/roughnight/Projekte/RandomWalk/MonoTest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/roughnight/Projekte/MonoTest/MonoTest.csproj",
+        "projectUniqueName": "/home/roughnight/Projekte/RandomWalk/MonoTest.csproj",
         "projectName": "MonoTest",
-        "projectPath": "/home/roughnight/Projekte/MonoTest/MonoTest.csproj",
+        "projectPath": "/home/roughnight/Projekte/RandomWalk/MonoTest.csproj",
         "packagesPath": "/home/roughnight/.nuget/packages/",
-        "outputPath": "/home/roughnight/Projekte/MonoTest/.godot/mono/temp/obj/",
+        "outputPath": "/home/roughnight/Projekte/RandomWalk/.godot/mono/temp/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/roughnight/.nuget/NuGet/NuGet.Config"

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Runtime.ExceptionServices;
 
 public partial class node_3d : Node3D
 {
@@ -23,23 +24,27 @@ public partial class node_3d : Node3D
 
 
 	private RandomNumberGenerator rng = new RandomNumberGenerator();
-	private Node3D levelData;
 	private Timer timer;
 	private Label placedTiles;
 	private SpinBox numTiles;
 	private SpinBox numThickness;
+	private SpinBox minThickness;
+	private SpinBox directionChange;
 	private GridMap gridMap;
 	private SpinBox wallHeight;
 	private CheckBox visualizeGeneration;
 	private LineEdit seed;
 	private CheckBox randSeed;
 	private CheckBox randThick;
+	private HSlider thickProb;
 
 	private bool visualize = false;
 	private bool started = false;
 	private bool running = false;
 	private bool done = false;
 	private int halfTiles ;
+
+	private bool breakProg = false;
 
 	
 
@@ -58,12 +63,14 @@ public partial class node_3d : Node3D
 	private int walker_y = 0;
 	private int walker_z = 0;
 	private int numPlacedTiles = 0;
+	private int directionChangeCounter = 0;
 	private double millis;
+	private int direction;
+	private int jumpAhead;
 		
 
 	public override void _Ready()
 	{
-		levelData = (Node3D)GetNode("Level");
 		timer = (Timer)GetNode("Timer");
 		placedTiles = (Label)GetNode("CanvasLayer/Panel/VBoxContainer/Placed");
 		numTiles = (SpinBox)GetNode("CanvasLayer/Panel/VBoxContainer/HBoxContainer/SpinBox");
@@ -74,6 +81,10 @@ public partial class node_3d : Node3D
 		seed = (LineEdit)GetNode("CanvasLayer/Panel/VBoxContainer/HBoxContainer4/Seed");
 		randSeed = (CheckBox)GetNode("CanvasLayer/Panel/VBoxContainer/RandSeed");
 		randThick = (CheckBox)GetNode("CanvasLayer/Panel/VBoxContainer/RandThick");
+		thickProb = (HSlider)GetNode("CanvasLayer/Panel/VBoxContainer/HBoxContainer5/thickProp");
+		minThickness = (SpinBox)GetNode("CanvasLayer/Panel/VBoxContainer/HBoxContainer6/minThick");
+		directionChange = (SpinBox)GetNode("CanvasLayer/Panel/VBoxContainer/HBoxContainer7/SpinBox");
+
 
 		seed.Text = rng.Seed.ToString();
 		timer.OneShot = true;
@@ -93,6 +104,8 @@ public partial class node_3d : Node3D
 			GD.Print(visualize);
 			started = true;
 		}*/
+		if (breakProg)
+			return;
 
         if (started)
 		{
@@ -124,9 +137,6 @@ public partial class node_3d : Node3D
 		halfTiles = MAXTILES/2;
 		visited = new bool[MAXTILES*2,MAXTILES*2];
 
-		foreach (Node n in levelData.GetChildren())
-			n.QueueFree();
-
 		for (int i=0;i<MAXTILES;i++)
 		 for (int j=0;j<MAXTILES;j++)
 		  	visited[i,j] = false;
@@ -138,6 +148,9 @@ public partial class node_3d : Node3D
 		numPlacedTiles = 0;
 		millis = 0;
 		done = false;
+		directionChangeCounter = 0;
+		direction = 0;
+		jumpAhead = 1;
 
 	}
 	
@@ -162,39 +175,56 @@ public partial class node_3d : Node3D
 			
 			// Pick Random Direction			
 			bool foundDirection = false;
-			if (IsStuck(walker_x,walker_y,walker_z))
-				FindFreeSpot();
+		//	if (IsStuck(walker_x,walker_y,walker_z))
+		//		FindFreeSpot();
+			directionChangeCounter++;
 			while (foundDirection==false)
-			{
-				int newDirection = rng.RandiRange(0,3);
-				switch ((WALKER_DIRECTION)newDirection)
+			{				
+				if (directionChangeCounter >= (int)directionChange.Value)
+				{
+					direction = rng.RandiRange(0,3);
+					directionChangeCounter = 0;
+				}
+				switch ((WALKER_DIRECTION)direction)
 				{
 					case WALKER_DIRECTION.FORWARD:
-						if (!CanPlace(walker_x,walker_y,walker_z-1))
+						if (!CanPlace(walker_x,walker_y,walker_z-jumpAhead))
 						{
-							walker_z--;
+							walker_z-=jumpAhead;
 							foundDirection=true;
+						} else {
+							direction = rng.RandiRange(0,3);
+							directionChangeCounter = 0;
 						}
 						break;
 					case WALKER_DIRECTION.BACKWARD:
-						if (!CanPlace(walker_x,walker_y,walker_z+1))
+						if (!CanPlace(walker_x,walker_y,walker_z+jumpAhead))
 						{
-							walker_z++;
+							walker_z+=jumpAhead;
 							foundDirection= true;
+						} else {
+							direction = rng.RandiRange(0,3);
+							directionChangeCounter = 0;
 						}
 						break;
 					case WALKER_DIRECTION.LEFT:
-						if (!CanPlace(walker_x-1,walker_y,walker_z))
+						if (!CanPlace(walker_x-jumpAhead,walker_y,walker_z))
 						{
-							walker_x--;
+							walker_x-=jumpAhead;
 							foundDirection = true;
+						} else {
+							direction = rng.RandiRange(0,3);
+							directionChangeCounter = 0;
 						}
 						break;
 					case WALKER_DIRECTION.RIGHT:
-						if (!CanPlace(walker_x+1,walker_y,walker_z))
+						if (!CanPlace(walker_x+jumpAhead,walker_y,walker_z))
 						{
-							walker_x++;
+							walker_x+=jumpAhead;
 							foundDirection = true;
+						} else {
+							direction = rng.RandiRange(0,3);
+							directionChangeCounter = 0;
 						}
 						break;
 				}
@@ -202,8 +232,6 @@ public partial class node_3d : Node3D
 			if (useDelay) timer.Start(waitTime);			
 		} else
 		{
-			//ThickenFloors();
-		//	MakeWalls();
 			running = false;
 			GD.Print("done " + millis.ToString());
 			done = true;
@@ -214,17 +242,18 @@ public partial class node_3d : Node3D
 	// returns false if tile is not visited
 	private bool CanPlace(int x,int y,int z)
 	{
-	/*	if (((x+halfTiles) < 0) || ((y+halfTiles) < 0) || ((z+halfTiles) < 0) || 
-			((x+halfTiles) > MAXTILES-1) || ((y+halfTiles) > MAXTILES-1) || ((z+halfTiles) > MAXTILES-1))
-			return true;*/
-		return visited[(int)(x+halfTiles),(int)(z+halfTiles)];
+		if (((x+halfTiles) < 0) || ((z+halfTiles) < 0) || 
+			((x+halfTiles) > MAXTILES*2-1) || ((z+halfTiles) > MAXTILES*2-1))
+			return true;
+		return false;
+		//return visited[(int)(x+halfTiles),(int)(z+halfTiles)];
 	}
 
 	private bool IsStuck(int x,int y,int z)
 	{
-		/*if (((x+halfTiles) < 0) || ((y+halfTiles) < 0) || ((z+halfTiles) < 0) || 
-			((x+halfTiles) > MAXTILES-1) || ((y+halfTiles) > MAXTILES-1) || ((z+halfTiles) > MAXTILES-1))
-			return true;*/
+		if (((x+halfTiles-jumpAhead) < 0) || ((z+halfTiles-jumpAhead) < 0) || 
+			((x+halfTiles+jumpAhead) > MAXTILES*2-1) || ((z+halfTiles+jumpAhead) > MAXTILES*2-1))
+			return true;
 
 		return (
 				visited[(int)(x+1+halfTiles),(int)(z+halfTiles)] && 
@@ -301,43 +330,40 @@ public partial class node_3d : Node3D
 
 		if ((int)numThickness.Value>1)
 		{
-			int th = (int)numThickness.Value;
+			int th = (int)minThickness.Value;
 			if (randThick.ButtonPressed)
 			{
-				th = rng.RandiRange(1,(int)numThickness.Value);
-				GD.Print(th);
+				int prob = rng.RandiRange(0,100);
+				
+				if (prob > (int)thickProb.Value)
+					th += rng.RandiRange(0,(int)numThickness.Value);
 			}
-			
+			jumpAhead = th;
 			for (int k=0;k<th;k++)
+			 for (int j=0;j<th;j++)
 			{
-				if ((walker_x-k > 0) && (walker_x+k < MAXTILES*2-1) && (walker_z-k > 0) && (walker_z+k < MAXTILES*2-1))
+				if ((walker_x-k+halfTiles > 0) && (walker_x+k+halfTiles < MAXTILES*2-1) && (walker_z-j+halfTiles > 0) && (walker_z+j+halfTiles < MAXTILES*2-1))
 				{
 					visited[walker_x-k+halfTiles,  walker_z  +halfTiles] = true;
 					visited[walker_x+k+halfTiles,  walker_z  +halfTiles] = true;
-					visited[walker_x  +halfTiles,  walker_z-k+halfTiles] = true;
-					visited[walker_x  +halfTiles,  walker_z+k+halfTiles] = true;
-					visited[walker_x-k+halfTiles,  walker_z-k+halfTiles] = true;
-					visited[walker_x+k+halfTiles,  walker_z+k+halfTiles] = true;
-					visited[walker_x+k+halfTiles,  walker_z-k+halfTiles] = true;
-					visited[walker_x-k+halfTiles,  walker_z+k+halfTiles] = true;
+					visited[walker_x  +halfTiles,  walker_z-j+halfTiles] = true;
+					visited[walker_x  +halfTiles,  walker_z+j+halfTiles] = true;
+					visited[walker_x-k+halfTiles,  walker_z-j+halfTiles] = true;
+					visited[walker_x+k+halfTiles,  walker_z+j+halfTiles] = true;
 					if (visualize)
 					{
 						PlaceBlock(walker_x-k,walker_y,walker_z,floorColor);
 						PlaceBlock(walker_x+k,walker_y,walker_z,floorColor);
-						PlaceBlock(walker_x  ,walker_y,walker_z-k,floorColor);
-						PlaceBlock(walker_x  ,walker_y,walker_z+k,floorColor);
-						PlaceBlock(walker_x-k,walker_y,walker_z-k,floorColor);
-						PlaceBlock(walker_x+k,walker_y,walker_z+k,floorColor);
-						PlaceBlock(walker_x+k,walker_y,walker_z-k,floorColor);
-						PlaceBlock(walker_x-k,walker_y,walker_z+k,floorColor);
+						PlaceBlock(walker_x  ,walker_y,walker_z-j,floorColor);
+						PlaceBlock(walker_x  ,walker_y,walker_z+j,floorColor);
+						PlaceBlock(walker_x-k,walker_y,walker_z-j,floorColor);
+						PlaceBlock(walker_x+k,walker_y,walker_z+j,floorColor);
 					}
+					
 				}
 			}
+
 		}
-
-
-
-
 		placedTiles.Text = "Placed Tiles : " + numPlacedTiles.ToString() + " / " + MAXTILES.ToString() + "   TIME : " + millis.ToString();
 		if (visualize)
 			PlaceBlock(walker_x,walker_y,walker_z,floorColor);
@@ -346,55 +372,12 @@ public partial class node_3d : Node3D
 
 	private void PlotMap()
 	{
-		//ThickenFloors();
 		for (int i=0;i<MAXTILES*2-1;i++)
 		 for (int j=0;j<MAXTILES*2-1;j++)
 			if (visited[i,j]==true) 
 				PlaceBlock((i-halfTiles),0,(j-halfTiles),floorColor);
 		
 		done = true;
-	}
-
-	private void ThickenFloors()
-	{
-		bool[,] newVisited = (bool[,])visited.Clone();
-		for (int i=0;i<MAXTILES*2-1;i++)
-		 for (int j=0;j<MAXTILES*2-1;j++)
-			if (visited[i,j])
-			{
-				int th = (int)numThickness.Value;
-				if (randThick.ButtonPressed)
-					th = rng.RandiRange(0,(int)numThickness.Value);
-				
-				for (int k=0;k<th;k++)
-				{
-					if ((i-k > 0) && (i+k < MAXTILES*2-1) && (j-k > 0) && (j+k < MAXTILES*2-1))
-					{
-						newVisited[i-k,  j] = true;
-						newVisited[i+k,  j] = true;
-						newVisited[i  ,j-k] = true;
-						newVisited[i  ,j+k] = true;
-
-						newVisited[i-k,j-k] = true;
-						newVisited[i+k,j+k] = true;
-						newVisited[i+k,j-k] = true;
-						newVisited[i-k,j+k] = true;
-						if (visualize)
-						{
-							PlaceBlock((i-k-halfTiles),0,(j-halfTiles),floorColor);
-							PlaceBlock((i+k-halfTiles),0,(j-halfTiles),floorColor);
-							PlaceBlock((i-halfTiles),0,(j-k-halfTiles),floorColor);
-							PlaceBlock((i-halfTiles),0,(j+k-halfTiles),floorColor);
-
-							PlaceBlock((i-k-halfTiles),0,(j-k-halfTiles),floorColor);
-							PlaceBlock((i+k-halfTiles),0,(j+k-halfTiles),floorColor);
-							PlaceBlock((i+k-halfTiles),0,(j-k-halfTiles),floorColor);
-							PlaceBlock((i-k-halfTiles),0,(j+k-halfTiles),floorColor);
-						}
-					}
-				}
-			}
-		visited = (bool[,])newVisited.Clone();;
 	}
 
 	private void MakeWalls()
@@ -427,7 +410,7 @@ public partial class node_3d : Node3D
 			rng.Randomize();
 			seed.Text = rng.Seed.ToString();
 		} else
-			rng.Seed = (ulong)Convert.ToInt64(seed.Text);
+			rng.Seed = (ulong)Convert.ToUInt64(seed.Text);
 
 		ClearLevelData();
 		running = true;
